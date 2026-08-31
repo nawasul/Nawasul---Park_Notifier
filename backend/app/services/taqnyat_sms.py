@@ -1,0 +1,1 @@
+"""Taqnyat SMS integration — stub."""

@@ -1,0 +1,66 @@
+# Nawasul Mobile App — Persistent Development Rules
+
+## Project context
+This is "Nawasul" (نواصل) — a QR-based vehicle owner notification app for the Saudi/Gulf market. Vehicle owners register cars, get a QR sticker, and get notified via automated call/push when someone scans it — without ever revealing their phone number. Built in Flutter, targeting Android, iOS, and Web (Chrome, used for local preview since we are not using Android Studio/emulators).
+
+## Non-negotiable architecture rules
+
+1. STATE MANAGEMENT: Use Riverpod (flutter_riverpod) exclusively. Never use setState for anything beyond trivial local UI toggles (e.g. password visibility). Never use Provider, Bloc, or GetX.
+
+2. NAVIGATION: Use go_router exclusively once it's introduced into the project. Never use raw Navigator.push with MaterialPageRoute once go_router is set up.
+
+3. FOLDER STRUCTURE: Feature-based, not type-based. Every feature lives in lib/features/<feature_name>/ with subfolders: data/ (repositories, API models), domain/ (entities, use-cases), presentation/ (screens, widgets, providers). Never place a screen file directly in lib/ or in a generic lib/screens/ folder.
+
+4. THEME SYSTEM: All colors, typography, spacing, and radius values MUST come from:
+   - lib/core/theme/app_colors.dart
+   - lib/core/theme/app_typography.dart
+   - lib/core/theme/app_spacing.dart
+   - lib/core/theme/app_radius.dart
+   NEVER hardcode a hex color, raw TextStyle, or magic number for padding/margin/radius directly inside a screen or widget. Always reference the theme constants (e.g. AppColors.primary, AppTypography.headingL, AppSpacing.md, AppRadius.lg).
+
+5. COMPONENT REUSABILITY: Before building a new screen, check lib/shared/widgets/ for an existing reusable component that fits (PrimaryButton, AppTextField, StatusPill, etc.) before creating a new one-off widget. If two screens need a similar UI element, it belongs in shared/widgets/, parameterized — never duplicated.
+
+6. THEME MODE: Light theme only. Do not introduce dark mode, dark colors, or ThemeMode.dark anywhere unless explicitly instructed.
+
+## Brand identity (from official Nawasul brand guidelines)
+
+Colors:
+- Deep Blue #4A70A9 (primary — buttons, headlines)
+- Periwinkle #8FABD4 (accent — links, secondary states)
+- Warm Cream #EFECE3 (background canvas)
+- Black #000000 (body text / print use only)
+
+Typography: Poppins (Latin text) via google_fonts, Noto Kufi Arabic (Arabic text). Never use a different font family.
+
+Tagline: "We Connect" / "نواصل"
+
+## Localization & RTL
+
+- The app must support English (LTR) and Arabic (RTL) from the start.
+- Always use EdgeInsetsDirectional instead of EdgeInsets for horizontal padding/margin so layouts flip correctly in RTL.
+- Always use Directionality-aware alignment (AlignmentDirectional) where left/right matters.
+- Never assume LTR reading order in Row children ordering — think in terms of "start" and "end," not "left" and "right."
+
+## Code quality expectations
+
+- After generating or editing code, always run `flutter analyze` and fix any resulting errors or warnings before considering the task complete.
+- Do not leave unused imports, unused variables, or commented-out dead code.
+- Every new screen must be added to the app's route list (once go_router is set up) so it is actually reachable and testable.
+- Prefer composition (small reusable widgets combined) over long, monolithic build() methods. If a build() method exceeds ~80 lines, extract sub-sections into private widget methods or separate widget classes.
+
+## Platform & tooling constraints
+
+- Development and testing happens via `flutter run -d chrome` (web preview). Do NOT suggest installing Android Studio, Android SDK, Xcode, or using an emulator/physical device — these are explicitly out of scope for this phase.
+- Some packages (e.g. mobile_scanner for QR camera scanning) have limited or no web support. When working with such packages, clearly flag this limitation and provide a safe fallback/stub for web preview rather than letting the app crash.
+- Firebase-related packages (firebase_core, firebase_messaging, etc.) require real project configuration (firebase_options.dart) to initialize. Until that's explicitly set up, wrap Firebase initialization in a try/catch so the app doesn't crash on startup without it.
+
+## Security constraints
+
+- Never hardcode API keys, secrets, or credentials anywhere in this Flutter codebase — not in .dart files, not in assets, not in pubspec.yaml.
+- All backend communication goes through the FastAPI backend. The Flutter app never calls third-party services (Taqnyat, Supabase with privileged keys, Firebase Admin, etc.) directly.
+- Public/client-safe config (e.g. Firebase client config for FCM, Supabase anon key) is acceptable to include when that integration is actually being built — but confirm with me before adding any new credential-like value to the codebase.
+
+## Communication style
+
+- When a request is ambiguous, make a reasonable UX/design decision consistent with the rules above, implement it, and clearly note the assumption made rather than stopping to ask.
+- When done with a batch of work, summarize: files created/changed, whether `flutter analyze` passed, and any assumptions made that I should review.

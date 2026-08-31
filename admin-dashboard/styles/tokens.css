@@ -1,0 +1,12 @@
+:root {
+  --color-primary: #4A70A9;
+  --color-secondary: #8FABD4;
+  --color-bg: #EFECE3;
+  --color-bg-dark: #141A26;
+  --color-text: #000000;
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+  --font-arabic: 'Noto Kufi Arabic', sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+}

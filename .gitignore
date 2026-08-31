@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.dart_tool/
+venv/
+__pycache__/
+
+# Build outputs
+.next/
+build/
+dist/
+out/
+*.pyc
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Flutter / Dart
+.packages
+.pub-cache/
+.pub/
+**/ios/Pods/
+**/android/.gradle/
+*.iml
+
+# Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs
+*.log
+npm-debug.log*
