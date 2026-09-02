@@ -88,6 +88,16 @@ class AppTheme {
         color: AppColors.borderSubtle,
         thickness: 1,
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.surface;
+          return AppColors.textMuted;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.primary;
+          return AppColors.borderSubtle;
+        }),
+      ),
     );
   }
 }

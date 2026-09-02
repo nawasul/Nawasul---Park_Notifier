@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/account/presentation/account_screen.dart';
+import '../../features/account/presentation/delete_account_screen.dart';
+import '../../features/account/presentation/edit_profile_screen.dart';
+import '../../features/account/presentation/profile_screen.dart';
 import '../../features/alerts/presentation/alert_detail_screen.dart';
 import '../../features/alerts/presentation/alerts_list_screen.dart';
 import '../../features/auth/presentation/account_setup_screen.dart';
@@ -10,6 +12,13 @@ import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/otp_verification_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
+import '../../features/legal/presentation/privacy_policy_screen.dart';
+import '../../features/legal/presentation/terms_conditions_screen.dart';
+import '../../features/settings/presentation/language_region_screen.dart';
+import '../../features/settings/presentation/notification_preferences_screen.dart';
+import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/support/presentation/contact_support_screen.dart';
+import '../../features/support/presentation/help_faq_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/language/presentation/language_selection_screen.dart';
 import '../../features/my_qr/presentation/my_qr_code_screen.dart';
@@ -106,7 +115,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.account,
-                builder: (context, _) => const AccountScreen(),
+                builder: (context, _) => const ProfileScreen(),
               ),
             ],
           ),
@@ -173,6 +182,51 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: AppRoutes.subscriptionSuccess,
         builder: (context, _) => const SubscriptionSuccessScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.profileEdit,
+        builder: (context, _) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.settings,
+        builder: (context, _) => const SettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.notificationPreferences,
+        builder: (context, _) => const NotificationPreferencesScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.languageRegion,
+        builder: (context, _) => const LanguageRegionScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.helpFaq,
+        builder: (context, _) => const HelpFaqScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.contactSupport,
+        builder: (context, _) => const ContactSupportScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.privacyPolicy,
+        builder: (context, _) => const PrivacyPolicyScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.termsConditions,
+        builder: (context, _) => const TermsConditionsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.deleteAccount,
+        builder: (context, _) => const DeleteAccountScreen(),
       ),
     ],
   );

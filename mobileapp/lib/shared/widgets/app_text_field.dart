@@ -21,6 +21,8 @@ class AppTextField extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.readOnly = false,
+    this.maxLines = 1,
+    this.minLines,
   });
 
   final String? label;
@@ -35,6 +37,8 @@ class AppTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final bool readOnly;
+  final int maxLines;
+  final int? minLines;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -94,6 +98,8 @@ class _AppTextFieldState extends State<AppTextField> {
             onChanged: widget.onChanged,
             onSubmitted: widget.onSubmitted,
             readOnly: widget.readOnly,
+            maxLines: widget.maxLines,
+            minLines: widget.minLines,
             style: AppTypography.bodyL,
             decoration: InputDecoration(
               hintText: widget.hint,

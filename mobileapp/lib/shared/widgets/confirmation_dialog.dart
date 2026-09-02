@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import 'destructive_button.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   const ConfirmationDialog({
@@ -59,21 +60,33 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: Text(cancelLabel, style: AppTypography.link.copyWith(
-            decoration: TextDecoration.none,
-            color: AppColors.textSecondary,
-          )),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
           child: Text(
-            confirmLabel,
+            cancelLabel,
             style: AppTypography.link.copyWith(
               decoration: TextDecoration.none,
-              color: isDestructive ? AppColors.error : AppColors.primary,
+              color: AppColors.textSecondary,
             ),
           ),
         ),
+        if (isDestructive)
+          SizedBox(
+            width: 140,
+            child: DestructiveButton(
+              label: confirmLabel,
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          )
+        else
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              confirmLabel,
+              style: AppTypography.link.copyWith(
+                decoration: TextDecoration.none,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
       ],
     );
   }

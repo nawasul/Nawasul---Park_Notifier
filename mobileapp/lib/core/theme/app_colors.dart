@@ -17,5 +17,6 @@ class AppColors {
   static const success = Color(0xFF0F6E56);
   static const successBg = Color(0xFFE1F5EE);
   static const error = Color(0xFFB3261E);
+  static const errorDark = Color(0xFF8C1D18);
   static const errorBg = Color(0xFFFBE9E7);
 }

@@ -29,4 +29,15 @@ class AppRoutes {
   static const subscriptionPlans = '/subscription/plans';
   static const subscriptionCheckout = '/subscription/checkout';
   static const subscriptionSuccess = '/subscription/success';
+
+  // Account & settings
+  static const profileEdit = '/profile/edit';
+  static const settings = '/settings';
+  static const notificationPreferences = '/settings/notifications';
+  static const languageRegion = '/settings/language';
+  static const helpFaq = '/help';
+  static const contactSupport = '/support/contact';
+  static const privacyPolicy = '/legal/privacy';
+  static const termsConditions = '/legal/terms';
+  static const deleteAccount = '/account/delete';
 }
