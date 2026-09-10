@@ -1,3 +1,4 @@
+/// Direct mirror of docs/design.json `spacing` object (+ layout constants).
 class AppSpacing {
   AppSpacing._();
 
@@ -7,14 +8,16 @@ class AppSpacing {
   static const double lg = 24;
   static const double xl = 32;
   static const double xxl = 48;
-  static const double xxxl = 64;
 
-  /// Primary button touch target height.
-  static const double buttonHeight = 58;
+  /// Primary button touch target height (design.json componentRules).
+  static const double buttonHeight = 56;
 
   /// Hero icon circle diameter on onboarding slides.
   static const double iconHero = 190;
 
   /// OTP digit box width/height baseline.
   static const double otpBoxSize = 56;
+
+  /// Legacy spacing token — maps to [xxl] under the new scale.
+  static const double xxxl = xxl;
 }

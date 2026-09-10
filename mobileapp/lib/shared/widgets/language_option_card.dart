@@ -29,11 +29,11 @@ class LanguageOptionCard extends StatelessWidget {
         curve: Curves.easeOut,
         padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.accentSoft : AppColors.surface,
+          color: isSelected ? AppColors.primaryContainer : AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.transparent,
-            width: isSelected ? 2 : 0,
+            color: isSelected ? AppColors.primary : AppColors.outlineVariant,
+            width: isSelected ? 2 : 1,
           ),
           boxShadow: AppShadows.card,
         ),
@@ -43,7 +43,9 @@ class LanguageOptionCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.surface : AppColors.accentSoft,
+                color: isSelected
+                    ? AppColors.surface
+                    : AppColors.secondaryContainer,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -86,7 +88,7 @@ class _SelectedCheckmark extends StatelessWidget {
       ),
       child: const Icon(
         Icons.check_rounded,
-        color: AppColors.surface,
+        color: AppColors.onPrimary,
         size: 18,
       ),
     );

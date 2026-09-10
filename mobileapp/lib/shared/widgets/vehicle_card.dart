@@ -29,51 +29,63 @@ class VehicleCard extends StatelessWidget {
         ? StatusPillVariant.active
         : StatusPillVariant.pending;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsetsDirectional.all(compact ? AppSpacing.md : AppSpacing.lg),
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: AppShadows.card,
         ),
-        child: Row(
-          children: [
-            Container(
-              width: compact ? 48 : 56,
-              height: compact ? 48 : 56,
-              decoration: BoxDecoration(
-                color: AppColors.accentSoft,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Icon(
-                Icons.directions_car_outlined,
-                color: AppColors.primary,
-                size: compact ? 24 : 28,
-              ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsetsDirectional.all(
+              compact ? AppSpacing.md : AppSpacing.lg,
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${vehicle.make} ${vehicle.model}',
-                    style: AppTypography.bodyL.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+            child: Row(
+              children: [
+                Container(
+                  width: compact ? 48 : 56,
+                  height: compact ? 48 : 56,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    vehicle.plateNumber,
-                    style: AppTypography.bodyM,
+                  child: Icon(
+                    Icons.directions_car_outlined,
+                    color: AppColors.primary,
+                    size: compact ? 24 : 28,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${vehicle.make} ${vehicle.model}',
+                        style: AppTypography.bodyL.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        vehicle.plateNumber,
+                        style: AppTypography.bodyM,
+                      ),
+                    ],
+                  ),
+                ),
+                StatusPill(label: statusLabel, variant: statusVariant),
+              ],
             ),
-            StatusPill(label: statusLabel, variant: statusVariant),
-          ],
+          ),
         ),
       ),
     );

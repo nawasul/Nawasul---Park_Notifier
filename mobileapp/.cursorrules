@@ -12,23 +12,26 @@ This is "Nawasul" (نواصل) — a QR-based vehicle owner notification app for
 3. FOLDER STRUCTURE: Feature-based, not type-based. Every feature lives in lib/features/<feature_name>/ with subfolders: data/ (repositories, API models), domain/ (entities, use-cases), presentation/ (screens, widgets, providers). Never place a screen file directly in lib/ or in a generic lib/screens/ folder.
 
 4. THEME SYSTEM: All colors, typography, spacing, and radius values MUST come from:
+   - docs/design.json (source of truth)
    - lib/core/theme/app_colors.dart
    - lib/core/theme/app_typography.dart
    - lib/core/theme/app_spacing.dart
    - lib/core/theme/app_radius.dart
-   NEVER hardcode a hex color, raw TextStyle, or magic number for padding/margin/radius directly inside a screen or widget. Always reference the theme constants (e.g. AppColors.primary, AppTypography.headingL, AppSpacing.md, AppRadius.lg).
+   - lib/core/theme/app_shadows.dart
+   NEVER hardcode a hex color, raw TextStyle, or magic number for padding/margin/radius directly inside a screen or widget. Always reference the theme constants (e.g. AppColors.primary, AppTypography.headingL, AppSpacing.md, AppRadius.lg). See docs/DESIGN_SYSTEM.md for the full palette reference.
 
 5. COMPONENT REUSABILITY: Before building a new screen, check lib/shared/widgets/ for an existing reusable component that fits (PrimaryButton, AppTextField, StatusPill, etc.) before creating a new one-off widget. If two screens need a similar UI element, it belongs in shared/widgets/, parameterized — never duplicated.
 
 6. THEME MODE: Light theme only. Do not introduce dark mode, dark colors, or ThemeMode.dark anywhere unless explicitly instructed.
 
-## Brand identity (from official Nawasul brand guidelines)
+## Brand identity
 
-Colors:
-- Deep Blue #4A70A9 (primary — buttons, headlines)
-- Periwinkle #8FABD4 (accent — links, secondary states)
-- Warm Cream #EFECE3 (background canvas)
-- Black #000000 (body text / print use only)
+Colors (see docs/design.json and docs/DESIGN_SYSTEM.md):
+- Dark #171717 (headings, primary text, dashboard hero card)
+- Accent #F2572B (primary — buttons, links, active states, CTAs)
+- Grey #4D4D4D (secondary text, borders, outlines)
+- Light #DEDEDE (page background canvas)
+- Surface #FFFFFF (cards and inputs on grey background)
 
 Typography: Poppins (Latin text) via google_fonts, Noto Kufi Arabic (Arabic text). Never use a different font family.
 

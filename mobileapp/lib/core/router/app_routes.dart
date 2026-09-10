@@ -11,12 +11,15 @@ class AppRoutes {
   static const forgotPassword = '/forgot-password';
   static const accountSetup = '/account-setup';
 
-  // Shell tabs
+  // Shell tabs (4 items)
   static const home = '/home';
-  static const vehicles = '/vehicles';
   static const myQr = '/my-qr';
-  static const alerts = '/alerts';
+  static const scan = '/scan';
   static const account = '/account';
+
+  // Stack routes (formerly shell tabs)
+  static const vehicles = '/vehicles';
+  static const alerts = '/alerts';
 
   // Pushed routes
   static const vehiclesAdd = '/vehicles/add';

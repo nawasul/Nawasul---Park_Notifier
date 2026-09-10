@@ -1,22 +1,62 @@
 import 'package:flutter/material.dart';
 
+/// Direct mirror of docs/design.json `colors` object.
 class AppColors {
   AppColors._();
 
-  static const primary = Color(0xFF4A70A9);
-  static const primaryDark = Color(0xFF3C5F8F);
-  static const accent = Color(0xFF8FABD4);
-  static const accentSoft = Color(0xFFE6EDF7);
-  static const background = Color(0xFFEFECE3);
+  static const seedColor = Color(0xFFF2572B);
+
+  static const primary = Color(0xFFF2572B);
+  static const primaryContainer = Color(0xFFFFE8E2);
+  static const onPrimary = Color(0xFFFFFFFF);
+  static const onPrimaryContainer = Color(0xFF171717);
+
+  static const secondary = Color(0xFF4D4D4D);
+  static const secondaryContainer = Color(0xFFECECEC);
+  static const onSecondary = Color(0xFFFFFFFF);
+
+  static const tertiaryAccent = Color(0xFF4D4D4D);
+
+  static const background = Color(0xFFDEDEDE);
   static const surface = Color(0xFFFFFFFF);
-  static const surfaceElevated = Color(0xFFF7F5EF);
-  static const borderSubtle = Color(0xFFE3DFD4);
-  static const textPrimary = Color(0xFF0F172A);
-  static const textSecondary = Color(0xFF5B6472);
-  static const textMuted = Color(0xFF9298A3);
-  static const success = Color(0xFF0F6E56);
-  static const successBg = Color(0xFFE1F5EE);
-  static const error = Color(0xFFB3261E);
-  static const errorDark = Color(0xFF8C1D18);
-  static const errorBg = Color(0xFFFBE9E7);
+  static const surfaceContainer = Color(0xFFECECEC);
+  static const surfaceContainerHigh = Color(0xFFD4D4D4);
+
+  static const outline = Color(0xFF4D4D4D);
+  static const outlineVariant = Color(0xFFCFCFCF);
+
+  static const textPrimary = Color(0xFF171717);
+  static const textSecondary = Color(0xFF4D4D4D);
+  static const textMuted = Color(0xFF4D4D4D);
+
+  /// Text on dark (#171717) surfaces.
+  static const textOnDark = Color(0xFFFFFFFF);
+  static const textOnDarkSecondary = Color(0xFFA0A0A0);
+  static const surfaceDarkElevated = Color(0xFF222222);
+
+  static const success = Color(0xFF1B7A52);
+  static const successContainer = Color(0xFFDCF3E9);
+
+  static const warning = Color(0xFFC45A00);
+  static const warningContainer = Color(0xFFFFE8CC);
+
+  static const error = Color(0xFFC62828);
+  static const errorContainer = Color(0xFFFBE9E7);
+
+  static const errorDark = Color(0xFF9E1F1F);
+
+  // Legacy aliases
+  static const accent = tertiaryAccent;
+  static const accentSoft = primaryContainer;
+  static const primaryDark = Color(0xFFD94A24);
+  static const borderSubtle = outlineVariant;
+  static const surfaceElevated = surfaceContainer;
+  static const successBg = successContainer;
+  static const errorBg = errorContainer;
+
+  /// Core brand palette shortcuts (design.json corePalette).
+  static const brandDark = Color(0xFF171717);
+  static const brandAccent = primary;
+  static const brandGrey = secondary;
+  static const brandLight = background;
 }

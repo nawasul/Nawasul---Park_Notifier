@@ -9,31 +9,48 @@ class SubscriptionState {
     required this.currentPlan,
     required this.billingCycle,
     this.checkoutPlan,
+    required this.periodEndsAt,
+    this.isActive = true,
   });
 
   final PlanTier currentPlan;
   final BillingCycle billingCycle;
   final PlanTier? checkoutPlan;
+  final DateTime periodEndsAt;
+  final bool isActive;
+
+  int get daysRemaining {
+    final days = periodEndsAt.difference(DateTime.now()).inDays;
+    return days < 0 ? 0 : days;
+  }
+
+  String get billingCycleLabel =>
+      billingCycle == BillingCycle.yearly ? 'Yearly' : 'Monthly';
 
   SubscriptionState copyWith({
     PlanTier? currentPlan,
     BillingCycle? billingCycle,
     PlanTier? checkoutPlan,
+    DateTime? periodEndsAt,
+    bool? isActive,
     bool clearCheckout = false,
   }) {
     return SubscriptionState(
       currentPlan: currentPlan ?? this.currentPlan,
       billingCycle: billingCycle ?? this.billingCycle,
       checkoutPlan: clearCheckout ? null : (checkoutPlan ?? this.checkoutPlan),
+      periodEndsAt: periodEndsAt ?? this.periodEndsAt,
+      isActive: isActive ?? this.isActive,
     );
   }
 }
 
 class SubscriptionNotifier extends Notifier<SubscriptionState> {
   @override
-  SubscriptionState build() => const SubscriptionState(
+  SubscriptionState build() => SubscriptionState(
         currentPlan: MockSubscription.defaultCurrentPlan,
         billingCycle: BillingCycle.monthly,
+        periodEndsAt: DateTime.now().add(const Duration(days: 23)),
       );
 
   void setBillingCycle(BillingCycle cycle) {
@@ -46,8 +63,13 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
 
   void confirmSubscription() {
     if (state.checkoutPlan != null) {
+      final duration = state.billingCycle == BillingCycle.yearly
+          ? const Duration(days: 365)
+          : const Duration(days: 30);
       state = state.copyWith(
         currentPlan: state.checkoutPlan!,
+        periodEndsAt: DateTime.now().add(duration),
+        isActive: true,
         clearCheckout: true,
       );
     }

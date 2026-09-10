@@ -19,25 +19,43 @@ class StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (bg, fg) = switch (variant) {
-      StatusPillVariant.active => (AppColors.accentSoft, AppColors.primary),
-      StatusPillVariant.pending => (AppColors.surfaceElevated, AppColors.textSecondary),
-      StatusPillVariant.muted => (AppColors.borderSubtle, AppColors.textMuted),
-      StatusPillVariant.success => (AppColors.successBg, AppColors.success),
-      StatusPillVariant.error => (AppColors.errorBg, AppColors.error),
+      StatusPillVariant.active => (
+          AppColors.successContainer,
+          AppColors.success,
+        ),
+      StatusPillVariant.pending => (
+          AppColors.warningContainer,
+          AppColors.warning,
+        ),
+      StatusPillVariant.muted => (
+          AppColors.surfaceContainer,
+          AppColors.textMuted,
+        ),
+      StatusPillVariant.success => (
+          AppColors.successContainer,
+          AppColors.success,
+        ),
+      StatusPillVariant.error => (
+          AppColors.errorContainer,
+          AppColors.error,
+        ),
     };
 
-    return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-      ),
-      child: Text(
+    return Chip(
+      label: Text(
         label,
         style: AppTypography.caption.copyWith(
           color: fg,
           fontWeight: FontWeight.w600,
         ),
+      ),
+      backgroundColor: bg,
+      side: BorderSide.none,
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: VisualDensity.compact,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
     );
   }

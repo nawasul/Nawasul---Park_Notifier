@@ -24,7 +24,7 @@ class IconBadge extends StatelessWidget {
       width: size,
       height: size,
       decoration: const BoxDecoration(
-        color: AppColors.accentSoft,
+        color: AppColors.primaryContainer,
         shape: BoxShape.circle,
         boxShadow: AppShadows.iconCircle,
       ),

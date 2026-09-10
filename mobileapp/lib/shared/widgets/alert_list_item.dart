@@ -41,7 +41,7 @@ class AlertListItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                color: AppColors.accentSoft,
+                color: AppColors.primaryContainer,
                 shape: BoxShape.circle,
               ),
               child: const Icon(

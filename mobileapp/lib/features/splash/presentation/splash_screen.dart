@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
           const Positioned(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: AppColors.accentSoft,
+                color: AppColors.primaryContainer,
                 shape: BoxShape.circle,
                 boxShadow: AppShadows.iconCircle,
               ),
@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
               DefaultTextStyle(
                 style: AppTypography.caption.copyWith(
                   letterSpacing: 3,
-                  color: AppColors.accent,
+                  color: AppColors.primary,
                 ),
                 child: AnimatedTextKit(
                   animatedTexts: [

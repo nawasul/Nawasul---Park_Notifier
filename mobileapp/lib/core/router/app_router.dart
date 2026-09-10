@@ -24,6 +24,7 @@ import '../../features/language/presentation/language_selection_screen.dart';
 import '../../features/my_qr/presentation/my_qr_code_screen.dart';
 import '../../features/my_qr/presentation/my_qr_tab_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/scan/presentation/scan_tab_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/sticker/presentation/sticker_order_screen.dart';
 import '../../features/sticker/presentation/sticker_order_status_screen.dart';
@@ -90,14 +91,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.vehicles,
-                builder: (context, _) => const VehiclesListScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
                 path: AppRoutes.myQr,
                 builder: (context, _) => const MyQrTabScreen(),
               ),
@@ -106,8 +99,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.alerts,
-                builder: (context, _) => const AlertsListScreen(),
+                path: AppRoutes.scan,
+                builder: (context, _) => const ScanTabScreen(),
               ),
             ],
           ),
@@ -120,6 +113,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.vehicles,
+        builder: (context, _) => const VehiclesListScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoutes.alerts,
+        builder: (context, _) => const AlertsListScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

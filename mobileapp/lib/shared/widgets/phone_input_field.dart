@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
@@ -95,80 +94,71 @@ class _PhoneFieldBodyState extends State<_PhoneFieldBody> {
         ? AppColors.error
         : _isFocused
             ? AppColors.primary
-            : AppColors.borderSubtle;
+            : AppColors.outline;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+        Container(
           decoration: BoxDecoration(
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.md),
-            boxShadow: _isFocused && !hasError
-                ? AppShadows.inputFocused
-                : AppShadows.input,
+            border: Border.all(
+              color: borderColor,
+              width: _isFocused || hasError ? 2 : 1.5,
+            ),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(
-                color: borderColor,
-                width: _isFocused || hasError ? 2 : 1,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsetsDirectional.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.md,
+                ),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: AppColors.outlineVariant),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('🇸🇦', style: AppTypography.bodyL),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      '+966',
+                      style: AppTypography.bodyL.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsetsDirectional.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.md,
-                  ),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: AppColors.borderSubtle),
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  keyboardType: TextInputType.phone,
+                  style: AppTypography.bodyL,
+                  decoration: InputDecoration(
+                    hintText: widget.hint,
+                    hintStyle: AppTypography.bodyM.copyWith(
+                      color: AppColors.textMuted,
+                    ),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsetsDirectional.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.md,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('🇸🇦', style: AppTypography.bodyL),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        '+966',
-                        style: AppTypography.bodyL.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                  onChanged: (value) {
+                    widget.onChanged?.call('+966$value');
+                  },
                 ),
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    keyboardType: TextInputType.phone,
-                    style: AppTypography.bodyL,
-                    decoration: InputDecoration(
-                      hintText: widget.hint,
-                      hintStyle: AppTypography.bodyM.copyWith(
-                        color: AppColors.textMuted,
-                      ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: const EdgeInsetsDirectional.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.md,
-                      ),
-                    ),
-                    onChanged: (value) {
-                      widget.onChanged?.call('+966$value');
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         if (widget.errorText != null) ...[

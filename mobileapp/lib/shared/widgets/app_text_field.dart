@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
@@ -46,28 +45,15 @@ class AppTextField extends StatefulWidget {
 
 class _AppTextFieldState extends State<AppTextField> {
   late bool _obscure;
-  final _focusNode = FocusNode();
-  bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
     _obscure = widget.obscureText;
-    _focusNode.addListener(() {
-      setState(() => _isFocused = _focusNode.hasFocus);
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final hasError = widget.errorText != null;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -81,42 +67,35 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            boxShadow: _isFocused && !hasError
-                ? AppShadows.inputFocused
-                : AppShadows.input,
-          ),
-          child: TextField(
-            controller: widget.controller,
-            focusNode: _focusNode,
-            obscureText: _obscure,
-            keyboardType: widget.keyboardType,
-            textInputAction: widget.textInputAction,
-            onChanged: widget.onChanged,
-            onSubmitted: widget.onSubmitted,
-            readOnly: widget.readOnly,
-            maxLines: widget.maxLines,
-            minLines: widget.minLines,
-            style: AppTypography.bodyL,
-            decoration: InputDecoration(
-              hintText: widget.hint,
-              prefixIcon: widget.prefixIcon,
-              suffixIcon: widget.obscureText
-                  ? IconButton(
-                      icon: Icon(
-                        _obscure
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: AppColors.textMuted,
-                        size: 20,
-                      ),
-                      onPressed: () => setState(() => _obscure = !_obscure),
-                    )
-                  : widget.suffixIcon,
-              errorText: widget.errorText,
+        TextField(
+          controller: widget.controller,
+          obscureText: _obscure,
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onChanged: widget.onChanged,
+          onSubmitted: widget.onSubmitted,
+          readOnly: widget.readOnly,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
+          style: AppTypography.bodyL,
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            prefixIcon: widget.prefixIcon,
+            suffixIcon: widget.obscureText
+                ? IconButton(
+                    icon: Icon(
+                      _obscure
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: AppColors.textMuted,
+                      size: 20,
+                    ),
+                    onPressed: () => setState(() => _obscure = !_obscure),
+                  )
+                : widget.suffixIcon,
+            errorText: widget.errorText,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.md),
             ),
           ),
         ),

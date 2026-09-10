@@ -22,7 +22,7 @@ class BillingCycleToggle extends StatelessWidget {
     return Container(
       padding: const EdgeInsetsDirectional.all(AppSpacing.xs),
       decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
+        color: AppColors.surfaceContainer,
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Row(
@@ -74,7 +74,7 @@ class _Segment extends StatelessWidget {
           label,
           style: AppTypography.bodyM.copyWith(
             fontWeight: FontWeight.w600,
-            color: isSelected ? AppColors.surface : AppColors.textSecondary,
+            color: isSelected ? AppColors.onPrimary : AppColors.textSecondary,
           ),
         ),
       ),

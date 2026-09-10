@@ -7,7 +7,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import 'app_loader.dart';
 
-class PrimaryButton extends StatefulWidget {
+class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
     required this.label,
@@ -24,57 +24,36 @@ class PrimaryButton extends StatefulWidget {
   final bool enabled;
 
   @override
-  State<PrimaryButton> createState() => _PrimaryButtonState();
-}
-
-class _PrimaryButtonState extends State<PrimaryButton> {
-  bool _isPressed = false;
-
-  bool get _isInteractive =>
-      widget.enabled && !widget.isLoading && widget.onPressed != null;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _isInteractive ? (_) => setState(() => _isPressed = true) : null,
-      onTapUp: _isInteractive ? (_) => setState(() => _isPressed = false) : null,
-      onTapCancel: _isInteractive ? () => setState(() => _isPressed = false) : null,
-      onTap: _isInteractive ? widget.onPressed : null,
-      child: AnimatedScale(
-        scale: _isPressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: AnimatedOpacity(
-          opacity: widget.enabled ? 1.0 : 0.5,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            width: double.infinity,
-            height: AppSpacing.buttonHeight,
-            decoration: BoxDecoration(
-              color: _isPressed ? AppColors.primaryDark : AppColors.primary,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-              boxShadow: widget.enabled ? AppShadows.button : null,
-            ),
-            child: widget.isLoading
-                ? const Center(
-                    child: AppLoader(size: 24, color: AppColors.surface),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (widget.leadingIcon != null) ...[
-                        Icon(
-                          widget.leadingIcon,
-                          color: AppColors.surface,
-                          size: 20,
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                      ],
-                      Text(widget.label, style: AppTypography.button),
-                    ],
-                  ),
+    final interactive = enabled && !isLoading && onPressed != null;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: interactive ? AppShadows.button : null,
+      ),
+      child: FilledButton(
+        onPressed: interactive ? onPressed : null,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(double.infinity, AppSpacing.buttonHeight),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
+          textStyle: AppTypography.button,
         ),
+        child: isLoading
+            ? const AppLoader(size: 24, color: AppColors.onPrimary)
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (leadingIcon != null) ...[
+                    Icon(leadingIcon, size: 20),
+                    const SizedBox(width: AppSpacing.sm),
+                  ],
+                  Text(label),
+                ],
+              ),
       ),
     );
   }

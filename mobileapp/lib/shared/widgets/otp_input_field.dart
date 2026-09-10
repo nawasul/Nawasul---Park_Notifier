@@ -3,7 +3,6 @@ import 'package:pinput/pinput.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
@@ -41,7 +40,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
         ? AppColors.error
         : isFocused
             ? AppColors.primary
-            : AppColors.borderSubtle;
+            : AppColors.outline;
 
     return PinTheme(
       width: AppSpacing.otpBoxSize,
@@ -54,7 +53,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
           color: borderColor,
           width: isFocused || hasError ? 2 : 1,
         ),
-        boxShadow: isFocused ? AppShadows.inputFocused : AppShadows.input,
+        boxShadow: const [],
       ),
     );
   }
