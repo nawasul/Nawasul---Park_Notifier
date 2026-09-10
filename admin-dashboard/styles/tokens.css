@@ -1,12 +1,24 @@
 :root {
-  --color-primary: #4A70A9;
-  --color-secondary: #8FABD4;
-  --color-bg: #EFECE3;
-  --color-bg-dark: #141A26;
-  --color-text: #000000;
-  --font-heading: 'Poppins', sans-serif;
-  --font-body: 'Poppins', sans-serif;
-  --font-arabic: 'Noto Kufi Arabic', sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 14px;
+  --color-primary: #F2572B;
+  --color-primary-container: #FFE8E2;
+  --color-secondary: #4D4D4D;
+  --color-secondary-container: #ECECEC;
+  --color-bg: #DEDEDE;
+  --color-bg-dark: #171717;
+  --color-surface: #FFFFFF;
+  --color-surface-container: #ECECEC;
+  --color-surface-container-high: #D4D4D4;
+  --color-text: #171717;
+  --color-text-secondary: #4D4D4D;
+  --color-outline: #4D4D4D;
+  --color-outline-variant: #CFCFCF;
+  --color-success: #1B7A52;
+  --color-warning: #C45A00;
+  --color-error: #C62828;
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Poppins", sans-serif;
+  --font-arabic: "Noto Kufi Arabic", sans-serif;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
 }
