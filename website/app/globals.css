@@ -1,19 +1,69 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
-:root {
-  --background: var(--color-bg);
-  --foreground: var(--color-text);
+@theme inline {
+  /* Colors — use as bg-primary, text-text-primary, etc. */
+  --color-primary: var(--nw-primary);
+  --color-primary-container: var(--nw-primary-container);
+  --color-on-primary: var(--nw-on-primary);
+  --color-on-primary-container: var(--nw-on-primary-container);
+
+  --color-secondary: var(--nw-secondary);
+  --color-secondary-container: var(--nw-secondary-container);
+  --color-on-secondary: var(--nw-on-secondary);
+
+  --color-background: var(--nw-background);
+  --color-surface: var(--nw-surface);
+  --color-surface-container: var(--nw-surface-container);
+  --color-surface-container-high: var(--nw-surface-container-high);
+
+  --color-outline: var(--nw-outline);
+  --color-outline-variant: var(--nw-outline-variant);
+
+  --color-text-primary: var(--nw-text-primary);
+  --color-text-secondary: var(--nw-text-secondary);
+  --color-text-muted: var(--nw-text-muted);
+
+  --color-dark: var(--nw-dark);
+
+  --color-success: var(--nw-success);
+  --color-success-container: var(--nw-success-container);
+  --color-warning: var(--nw-warning);
+  --color-warning-container: var(--nw-warning-container);
+  --color-error: var(--nw-error);
+  --color-error-container: var(--nw-error-container);
+
+  /* Fonts */
+  --font-sans: var(--nw-font-body);
+  --font-heading: var(--nw-font-heading);
+  --font-arabic: var(--nw-font-arabic);
+
+  /* Radius */
+  --radius-sm: var(--nw-radius-sm);
+  --radius-md: var(--nw-radius-md);
+  --radius-lg: var(--nw-radius-lg);
+  --radius-pill: var(--nw-radius-pill);
+
+  /* Shadows */
+  --shadow-card: var(--nw-shadow-card);
+  --shadow-button: var(--nw-shadow-button);
+  --shadow-floating: var(--nw-shadow-floating);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-body);
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
+  background: var(--nw-background);
+  color: var(--nw-text-primary);
+  font-family: var(--nw-font-body);
+}
+
+html[dir="rtl"] body {
+  font-family: var(--nw-font-arabic);
+}
+
+html[dir="rtl"] .font-heading {
+  font-family: var(--nw-font-arabic);
 }

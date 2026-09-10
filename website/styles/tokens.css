@@ -1,12 +1,60 @@
+/**
+ * Design tokens mirrored from mobileapp/docs/design.json
+ * Orange/black/grey system — do not use arbitrary hex in components.
+ */
 :root {
-  --color-primary: #4A70A9;
-  --color-secondary: #8FABD4;
-  --color-bg: #EFECE3;
-  --color-bg-dark: #141A26;
-  --color-text: #000000;
-  --font-heading: 'Poppins', sans-serif;
-  --font-body: 'Poppins', sans-serif;
-  --font-arabic: 'Noto Kufi Arabic', sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 14px;
+  /* Core palette */
+  --nw-primary: #f2572b;
+  --nw-primary-container: #ffe8e2;
+  --nw-on-primary: #ffffff;
+  --nw-on-primary-container: #171717;
+
+  --nw-secondary: #4d4d4d;
+  --nw-secondary-container: #ececec;
+  --nw-on-secondary: #ffffff;
+
+  --nw-background: #dedede;
+  --nw-surface: #ffffff;
+  --nw-surface-container: #ececec;
+  --nw-surface-container-high: #d4d4d4;
+
+  --nw-outline: #4d4d4d;
+  --nw-outline-variant: #cfcfcf;
+
+  --nw-text-primary: #171717;
+  --nw-text-secondary: #4d4d4d;
+  --nw-text-muted: #4d4d4d;
+
+  --nw-dark: #171717;
+
+  --nw-success: #1b7a52;
+  --nw-success-container: #dcf3e9;
+  --nw-warning: #c45a00;
+  --nw-warning-container: #ffe8cc;
+  --nw-error: #c62828;
+  --nw-error-container: #fbe9e7;
+
+  /* Typography */
+  --nw-font-heading: var(--font-poppins), "Poppins", sans-serif;
+  --nw-font-body: var(--font-poppins), "Poppins", sans-serif;
+  --nw-font-arabic: var(--font-noto-kufi), "Noto Kufi Arabic", sans-serif;
+
+  /* Spacing */
+  --nw-space-xs: 4px;
+  --nw-space-sm: 8px;
+  --nw-space-md: 16px;
+  --nw-space-lg: 24px;
+  --nw-space-xl: 32px;
+  --nw-space-xxl: 48px;
+
+  /* Radius */
+  --nw-radius-sm: 12px;
+  --nw-radius-md: 16px;
+  --nw-radius-lg: 20px;
+  --nw-radius-pill: 999px;
+
+  /* Elevation */
+  --nw-shadow-card: 0 8px 24px rgb(23 23 23 / 0.07);
+  --nw-shadow-button: 0 6px 16px rgb(242 87 43 / 0.18);
+  --nw-shadow-floating: 0 12px 30px rgb(23 23 23 / 0.1);
 }
