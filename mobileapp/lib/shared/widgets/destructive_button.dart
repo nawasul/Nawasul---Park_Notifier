@@ -14,6 +14,7 @@ class DestructiveButton extends StatefulWidget {
     this.isLoading = false,
     this.leadingIcon,
     this.enabled = true,
+    this.expand = true,
   });
 
   final String label;
@@ -21,6 +22,7 @@ class DestructiveButton extends StatefulWidget {
   final bool isLoading;
   final IconData? leadingIcon;
   final bool enabled;
+  final bool expand;
 
   @override
   State<DestructiveButton> createState() => _DestructiveButtonState();
@@ -40,18 +42,23 @@ class _DestructiveButtonState extends State<DestructiveButton> {
       onTapCancel: _isInteractive ? () => setState(() => _isPressed = false) : null,
       onTap: _isInteractive ? widget.onPressed : null,
       child: AnimatedScale(
-        scale: _isPressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 100),
+        scale: MediaQuery.disableAnimationsOf(context) || !_isPressed ? 1.0 : 0.97,
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 100),
         curve: Curves.easeOut,
         child: AnimatedOpacity(
           opacity: widget.enabled ? 1.0 : 0.5,
           duration: const Duration(milliseconds: 200),
           child: Container(
-            width: double.infinity,
+            width: widget.expand ? double.infinity : null,
             height: AppSpacing.buttonHeight,
+            padding: widget.expand
+                ? null
+                : const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.md),
             decoration: BoxDecoration(
               color: _isPressed ? AppColors.errorDark : AppColors.error,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
+              borderRadius: BorderRadius.circular(AppRadius.md),
             ),
             child: widget.isLoading
                 ? const Center(
@@ -59,6 +66,7 @@ class _DestructiveButtonState extends State<DestructiveButton> {
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
                     children: [
                       if (widget.leadingIcon != null) ...[
                         Icon(
@@ -68,7 +76,17 @@ class _DestructiveButtonState extends State<DestructiveButton> {
                         ),
                         const SizedBox(width: AppSpacing.sm),
                       ],
-                      Text(widget.label, style: AppTypography.button),
+                      if (widget.expand)
+                        Flexible(
+                          child: Text(
+                            widget.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.button,
+                          ),
+                        )
+                      else
+                        Text(widget.label, style: AppTypography.button),
                     ],
                   ),
           ),

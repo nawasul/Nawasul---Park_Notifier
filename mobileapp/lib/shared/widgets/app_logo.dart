@@ -11,10 +11,12 @@ class AppLogo extends StatelessWidget {
     super.key,
     this.size = AppLogoSize.large,
     this.showTagline = true,
+    this.tagline,
   });
 
   final AppLogoSize size;
   final bool showTagline;
+  final String? tagline;
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +42,13 @@ class AppLogo extends StatelessWidget {
           ),
         ),
         SizedBox(height: isLarge ? AppSpacing.sm : AppSpacing.xs),
-        if (showTagline)
+        if (showTagline && tagline != null)
           Text(
-            'WE CONNECT',
+            tagline!,
             style: AppTypography.caption.copyWith(
               fontSize: isLarge ? 12 : 10,
               letterSpacing: isLarge ? 3 : 2,
-              color: AppColors.accent,
+              color: AppColors.secondary,
             ),
           ),
       ],

@@ -6,34 +6,36 @@ import 'app_colors.dart';
 class AppTypography {
   AppTypography._();
 
-  static TextStyle get headingXL => GoogleFonts.poppins(
-        fontSize: 32,
+  static TextStyle get displayL => GoogleFonts.poppins(
+        fontSize: 34,
         fontWeight: FontWeight.w700,
-        height: 1.25,
-        letterSpacing: -0.5,
+        height: 1.1,
+        letterSpacing: -0.8,
         color: AppColors.textPrimary,
       );
 
+  static TextStyle get headingXL => displayL;
+
   static TextStyle get headingL => GoogleFonts.poppins(
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        height: 1.2,
-        letterSpacing: -0.5,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        height: 1.25,
+        letterSpacing: -0.4,
         color: AppColors.textPrimary,
       );
 
   static TextStyle get headingM => GoogleFonts.poppins(
-        fontSize: 18,
+        fontSize: 19,
         fontWeight: FontWeight.w600,
-        height: 1.35,
-        letterSpacing: -0.3,
+        height: 1.3,
+        letterSpacing: -0.2,
         color: AppColors.textPrimary,
       );
 
   static TextStyle get bodyL => GoogleFonts.poppins(
         fontSize: 16,
         fontWeight: FontWeight.w400,
-        height: 1.5,
+        height: 1.55,
         color: AppColors.textPrimary,
       );
 
@@ -62,9 +64,9 @@ class AppTypography {
         fontSize: 14,
         fontWeight: FontWeight.w600,
         height: 1.5,
-        color: AppColors.accent,
+        color: AppColors.primary,
         decoration: TextDecoration.underline,
-        decorationColor: AppColors.accent,
+        decorationColor: AppColors.primary,
       );
 
   static TextStyle arabicHeading(String text) => GoogleFonts.notoKufiArabic(
@@ -83,7 +85,7 @@ class AppTypography {
       );
 
   static TextTheme get textTheme => TextTheme(
-        displayLarge: headingXL,
+        displayLarge: displayL,
         headlineMedium: headingL,
         titleMedium: headingM,
         bodyLarge: bodyL,
@@ -91,4 +93,12 @@ class AppTypography {
         labelSmall: caption,
         labelLarge: button,
       );
+
+  /// Arabic uses Noto Kufi. Latin stays on the Poppins text theme.
+  static TextTheme textThemeFor(Locale locale) {
+    if (locale.languageCode == 'ar') {
+      return GoogleFonts.notoKufiArabicTextTheme(textTheme);
+    }
+    return textTheme;
+  }
 }

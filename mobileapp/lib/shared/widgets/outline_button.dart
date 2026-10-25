@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
 class OutlineButton extends StatefulWidget {
@@ -33,17 +34,19 @@ class _OutlineButtonState extends State<OutlineButton> {
       onTapCancel: _isInteractive ? () => setState(() => _isPressed = false) : null,
       onTap: _isInteractive ? widget.onPressed : null,
       child: AnimatedScale(
-        scale: _isPressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 100),
+        scale: MediaQuery.disableAnimationsOf(context) || !_isPressed ? 1.0 : 0.97,
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 100),
         child: AnimatedOpacity(
           opacity: widget.enabled ? 1.0 : 0.5,
           duration: const Duration(milliseconds: 200),
           child: Container(
             width: double.infinity,
-            height: 52,
+            height: AppSpacing.buttonHeight,
             decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.md),
               border: Border.all(
                 color: AppColors.primary,
                 width: 1.5,

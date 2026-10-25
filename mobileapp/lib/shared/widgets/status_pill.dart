@@ -4,7 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_typography.dart';
 
-enum StatusPillVariant { active, pending, muted, success, error }
+enum StatusPillVariant { active, pending, muted, success, warning, error }
 
 class StatusPill extends StatelessWidget {
   const StatusPill({
@@ -23,6 +23,7 @@ class StatusPill extends StatelessWidget {
       StatusPillVariant.pending => (AppColors.surfaceElevated, AppColors.textSecondary),
       StatusPillVariant.muted => (AppColors.borderSubtle, AppColors.textMuted),
       StatusPillVariant.success => (AppColors.successBg, AppColors.success),
+      StatusPillVariant.warning => (AppColors.warningContainer, AppColors.warning),
       StatusPillVariant.error => (AppColors.errorBg, AppColors.error),
     };
 

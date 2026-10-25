@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/mock/mock_auth_data.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/config/saudi_cities.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/city_select_field.dart';
+import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/primary_button.dart';
-import 'providers/profile_provider.dart';
+import '../../home/presentation/providers/garage_provider.dart';
+import '../../orders/presentation/providers/order_draft.dart';
+import '../data/account_repository.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -20,164 +23,106 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
-  late final TextEditingController _nameController;
-  late final TextEditingController _phoneController;
-  late String? _selectedCity;
-  bool _isDropdownFocused = false;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    final user = ref.read(profileProvider);
-    _nameController = TextEditingController(text: user.name);
-    _phoneController = TextEditingController(text: user.phone);
-    _selectedCity = user.city;
-  }
+  final _name = TextEditingController();
+  final _phoneField = TextEditingController();
+  String? _city;
+  var _cityFocused = false;
+  var _filled = false;
+  var _loading = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
+    _name.dispose();
+    _phoneField.dispose();
     super.dispose();
   }
 
-  Future<void> _onSave() async {
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-    if (!mounted) return;
-    ref.read(profileProvider.notifier).updateProfile(
-          name: _nameController.text.trim(),
-          city: _selectedCity,
-        );
-    setState(() => _isLoading = false);
-    if (mounted) context.pop();
+  bool get _valid {
+    final length = _name.text.trim().length;
+    return length >= 2 && length <= 50;
   }
 
-  void _onAvatarTap() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Photo upload coming soon')),
-    );
+  Future<void> _save() async {
+    if (!_valid || _loading) return;
+    setState(() => _loading = true);
+    try {
+      await ref.read(accountRepositoryProvider).updateMe(
+            name: _name.text.trim(),
+            city: _city,
+          );
+      ref.invalidate(currentUserProvider);
+      if (mounted) context.pop();
+    } catch (_) {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(profileProvider);
+    final l10n = AppLocalizations.of(context);
+    final user = ref.watch(currentUserProvider);
+    final labels = {
+      for (final id in saudiCityIds) id: saudiCityLabel(l10n, id),
+    };
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text('Edit Profile', style: AppTypography.headingM),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
+    return AppScaffold(
+      title: l10n.accountEdit,
+      body: user.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, _) => ErrorState(
+          onRetry: () => ref.invalidate(currentUserProvider),
         ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        data: (me) {
+          if (!_filled) {
+            _filled = true;
+            _name.text = me.name;
+            _phoneField.text = me.phone;
+            _city = cityIdFor(me.city);
+          }
+          return ListView(
             children: [
-              Center(
-                child: GestureDetector(
-                  onTap: _onAvatarTap,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        width: 96,
-                        height: 96,
-                        decoration: const BoxDecoration(
-                          color: AppColors.accentSoft,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            user.initials,
-                            style: AppTypography.headingL.copyWith(
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                      PositionedDirectional(
-                        end: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: const BoxDecoration(
-                            color: AppColors.accentSoft,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt_outlined,
-                            size: 16,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              AppTextField(
+                key: const Key('profile-name'),
+                controller: _name,
+                label: l10n.nameLabel,
+                onChanged: (_) => setState(() {}),
               ),
-              const SizedBox(height: AppSpacing.xxxl),
-              Container(
-                padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
-                decoration: AppTheme.surfaceCardDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppTextField(
-                      label: 'Full Name',
-                      controller: _nameController,
-                      prefixIcon: const Icon(Icons.person_outline, size: 20),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    AppTextField(
-                      label: 'Phone',
-                      controller: _phoneController,
-                      readOnly: true,
-                      prefixIcon: const Icon(Icons.phone_outlined, size: 20),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      'Phone changes require OTP verification',
-                      style: AppTypography.caption.copyWith(
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      'City / Region',
-                      style: AppTypography.bodyM.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    CitySelectField(
-                      cities: MockAuthData.saudiCities,
-                      selectedCity: _selectedCity,
-                      isFocused: _isDropdownFocused,
-                      onFocusChange: (focused) {
-                        setState(() => _isDropdownFocused = focused);
-                      },
-                      onChanged: (city) => setState(() => _selectedCity = city),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(l10n.cityLabel, style: AppTypography.bodyM),
+              const SizedBox(height: AppSpacing.sm),
+              CitySelectField(
+                cities: saudiCityIds,
+                labels: labels,
+                selectedCity: _city,
+                hint: l10n.cityHint,
+                isFocused: _cityFocused,
+                onFocusChange: (focused) => setState(() => _cityFocused = focused),
+                onChanged: (value) => setState(() => _city = value),
               ),
-              const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.lg),
+              AppTextField(
+                label: l10n.orderPhone,
+                controller: _phoneField,
+                readOnly: true,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                l10n.accountPhoneLocked,
+                style: AppTypography.caption,
+              ),
+              const SizedBox(height: AppSpacing.xl),
               PrimaryButton(
-                label: 'Save Changes',
-                isLoading: _isLoading,
-                onPressed: _isLoading ? null : _onSave,
+                key: const Key('profile-save'),
+                label: l10n.vehicleSave,
+                isLoading: _loading,
+                enabled: _valid && !_loading,
+                onPressed: _save,
               ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }

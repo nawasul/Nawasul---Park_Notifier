@@ -1,56 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 
+import '../../features/home/presentation/providers/garage_provider.dart';
+import '../../shared/widgets/app_bottom_nav_bar.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_spacing.dart';
+import 'app_routes.dart';
 
-class MainShell extends StatelessWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: navigationShell,
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x0F0F172A),
-              blurRadius: 20,
-              offset: Offset(0, -4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsetsDirectional.fromSTEB(
-          AppSpacing.md,
-          AppSpacing.sm,
-          AppSpacing.md,
-          AppSpacing.md,
-        ),
-        child: GNav(
-          selectedIndex: navigationShell.currentIndex,
-          onTabChange: navigationShell.goBranch,
-          gap: AppSpacing.sm,
-          activeColor: AppColors.primary,
-          color: AppColors.textMuted,
-          iconSize: 22,
-          padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          tabBackgroundColor: AppColors.accentSoft,
-          tabs: const [
-            GButton(icon: Icons.home_outlined, text: 'Home'),
-            GButton(icon: Icons.directions_car_outlined, text: 'Vehicles'),
-            GButton(icon: Icons.qr_code_2_outlined, text: 'My QR'),
-            GButton(icon: Icons.notifications_outlined, text: 'Alerts'),
-            GButton(icon: Icons.person_outline, text: 'Account'),
-          ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final branch = navigationShell.currentIndex;
+    final selectedSlot = const [0, 1, 3, 4][branch];
+    final unread = ref.watch(alertsProvider).value?.any((alert) => !alert.isRead) ?? false;
+
+    return PopScope(
+      canPop: branch == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        navigationShell.goBranch(0);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: navigationShell,
+        bottomNavigationBar: AppBottomNavBar(
+          selectedSlot: selectedSlot,
+          showAlertsDot: unread,
+          onSlotSelected: (slot) {
+            if (slot == 2) {
+              context.push(AppRoutes.orderVehicle);
+              return;
+            }
+            navigationShell.goBranch(const [0, 1, 0, 2, 3][slot]);
+          },
         ),
       ),
     );

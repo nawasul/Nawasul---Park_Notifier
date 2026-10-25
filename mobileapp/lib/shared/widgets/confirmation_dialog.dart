@@ -11,8 +11,8 @@ class ConfirmationDialog extends StatelessWidget {
     super.key,
     required this.title,
     required this.message,
-    this.confirmLabel = 'Confirm',
-    this.cancelLabel = 'Cancel',
+    required this.confirmLabel,
+    required this.cancelLabel,
     this.isDestructive = false,
   });
 
@@ -26,8 +26,8 @@ class ConfirmationDialog extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String message,
-    String confirmLabel = 'Confirm',
-    String cancelLabel = 'Cancel',
+    required String confirmLabel,
+    required String cancelLabel,
     bool isDestructive = false,
   }) {
     return showDialog<bool>(
@@ -50,7 +50,24 @@ class ConfirmationDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       title: Text(title, style: AppTypography.headingM),
-      content: Text(message, style: AppTypography.bodyM),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(message, style: AppTypography.bodyM),
+          if (isDestructive) ...[
+            const SizedBox(height: AppSpacing.lg),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: DestructiveButton(
+                expand: false,
+                label: confirmLabel,
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ),
+          ],
+        ],
+      ),
       actionsPadding: const EdgeInsetsDirectional.fromSTEB(
         AppSpacing.md,
         0,
@@ -68,15 +85,7 @@ class ConfirmationDialog extends StatelessWidget {
             ),
           ),
         ),
-        if (isDestructive)
-          SizedBox(
-            width: 140,
-            child: DestructiveButton(
-              label: confirmLabel,
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          )
-        else
+        if (!isDestructive)
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(

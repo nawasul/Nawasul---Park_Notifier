@@ -1,46 +1,33 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/mock/mock_vehicles.dart';
+import '../../data/vehicle_repository.dart';
+import '../../../../core/models/vehicle.dart';
 
-class VehicleNotifier extends Notifier<List<Vehicle>> {
+class VehicleNotifier extends AsyncNotifier<List<Vehicle>> {
   @override
-  List<Vehicle> build() => List.of(MockVehicles.initialVehicles);
-
-  void addVehicle(Vehicle vehicle) {
-    state = [...state, vehicle];
+  Future<List<Vehicle>> build() {
+    return ref.read(vehicleRepositoryProvider).fetchVehicles();
   }
 
-  void updateVehicle(Vehicle vehicle) {
-    state = [
-      for (final v in state)
-        if (v.id == vehicle.id) vehicle else v,
-    ];
+  Future<Vehicle> addVehicle(Vehicle vehicle) async {
+    final repo = ref.read(vehicleRepositoryProvider);
+    final created = await repo.addVehicle(vehicle);
+    state = AsyncData(await repo.fetchVehicles());
+    return created;
   }
 
-  void deleteVehicle(String id) {
-    state = state.where((v) => v.id != id).toList();
+  Future<void> updateVehicle(Vehicle vehicle) async {
+    final repo = ref.read(vehicleRepositoryProvider);
+    await repo.updateVehicle(vehicle);
+    state = AsyncData(await repo.fetchVehicles());
   }
 
-  Vehicle? getById(String id) {
-    try {
-      return state.firstWhere((v) => v.id == id);
-    } catch (_) {
-      return null;
-    }
+  Future<void> deleteVehicle(String id) async {
+    final repo = ref.read(vehicleRepositoryProvider);
+    await repo.deleteVehicle(id);
+    state = AsyncData(await repo.fetchVehicles());
   }
 }
 
 final vehicleProvider =
-    NotifierProvider<VehicleNotifier, List<Vehicle>>(VehicleNotifier.new);
-
-final selectedVehicleIdProvider = StateProvider<String?>((ref) {
-  final vehicles = ref.watch(vehicleProvider);
-  final active = vehicles.where((v) => v.qrStatus == QrStatus.active);
-  if (active.isNotEmpty) return active.first.id;
-  if (vehicles.isNotEmpty) return vehicles.first.id;
-  return null;
-});
-
-final vehicleByIdProvider = Provider.family<Vehicle?, String>((ref, id) {
-  return ref.watch(vehicleProvider.notifier).getById(id);
-});
+    AsyncNotifierProvider<VehicleNotifier, List<Vehicle>>(VehicleNotifier.new);

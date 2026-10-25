@@ -7,15 +7,19 @@ import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
+typedef OtpField = OtpInputField;
+
 class OtpInputField extends StatefulWidget {
   const OtpInputField({
     super.key,
+    this.controller,
     this.onCompleted,
     this.onChanged,
     this.hasError = false,
     this.length = 6,
   });
 
+  final TextEditingController? controller;
   final ValueChanged<String>? onCompleted;
   final ValueChanged<String>? onChanged;
   final bool hasError;
@@ -26,12 +30,20 @@ class OtpInputField extends StatefulWidget {
 }
 
 class _OtpInputFieldState extends State<OtpInputField> {
-  final _controller = TextEditingController();
+  TextEditingController? _owned;
   final _focusNode = FocusNode();
+
+  TextEditingController get _controller => widget.controller ?? _owned!;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller == null) _owned = TextEditingController();
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _owned?.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -65,7 +77,9 @@ class _OtpInputFieldState extends State<OtpInputField> {
     final focusedTheme = _buildPinTheme(isFocused: true);
     final errorTheme = _buildPinTheme(hasError: true);
 
-    return Pinput(
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Pinput(
       length: widget.length,
       controller: _controller,
       focusNode: _focusNode,
@@ -81,6 +95,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
         width: 2,
         height: 28,
         color: AppColors.primary,
+      ),
       ),
     );
   }

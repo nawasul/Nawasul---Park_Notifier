@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../core/mock/mock_vehicles.dart';
+import '../../core/models/vehicle.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
@@ -14,21 +15,18 @@ class VehicleCard extends StatelessWidget {
     required this.vehicle,
     this.onTap,
     this.compact = false,
+    this.statusLabel,
+    this.statusVariant = StatusPillVariant.muted,
   });
 
   final Vehicle vehicle;
   final VoidCallback? onTap;
   final bool compact;
+  final String? statusLabel;
+  final StatusPillVariant statusVariant;
 
   @override
   Widget build(BuildContext context) {
-    final statusLabel = vehicle.qrStatus == QrStatus.active
-        ? 'QR Active'
-        : 'Sticker Pending';
-    final statusVariant = vehicle.qrStatus == QrStatus.active
-        ? StatusPillVariant.active
-        : StatusPillVariant.pending;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -44,11 +42,11 @@ class VehicleCard extends StatelessWidget {
               width: compact ? 48 : 56,
               height: compact ? 48 : 56,
               decoration: BoxDecoration(
-                color: AppColors.accentSoft,
+                color: AppColors.primaryContainer,
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Icon(
-                Icons.directions_car_outlined,
+                AppIcons.car,
                 color: AppColors.primary,
                 size: compact ? 24 : 28,
               ),
@@ -59,20 +57,20 @@ class VehicleCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${vehicle.make} ${vehicle.model}',
-                    style: AppTypography.bodyL.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    vehicle.displayName,
+                    style: AppTypography.bodyL.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    vehicle.plateNumber,
+                    vehicle.plate,
+                    textDirection: TextDirection.ltr,
                     style: AppTypography.bodyM,
                   ),
                 ],
               ),
             ),
-            StatusPill(label: statusLabel, variant: statusVariant),
+            if (statusLabel != null)
+              StatusPill(label: statusLabel!, variant: statusVariant),
           ],
         ),
       ),

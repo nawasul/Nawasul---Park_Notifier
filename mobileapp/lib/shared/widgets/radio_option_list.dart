@@ -75,10 +75,15 @@ class RadioOptionList extends StatelessWidget {
                             : AppColors.surface,
                       ),
                       child: selectedValue == option
-                          ? const Icon(
-                              Icons.circle,
-                              size: 10,
-                              color: AppColors.surface,
+                          ? Center(
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.surface,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
                             )
                           : null,
                     ),

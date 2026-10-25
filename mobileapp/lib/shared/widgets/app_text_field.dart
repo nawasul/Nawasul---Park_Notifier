@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
@@ -23,6 +24,7 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.minLines,
+    this.inputFormatters,
   });
 
   final String? label;
@@ -39,6 +41,7 @@ class AppTextField extends StatefulWidget {
   final bool readOnly;
   final int maxLines;
   final int? minLines;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -100,6 +103,7 @@ class _AppTextFieldState extends State<AppTextField> {
             readOnly: widget.readOnly,
             maxLines: widget.maxLines,
             minLines: widget.minLines,
+            inputFormatters: widget.inputFormatters,
             style: AppTypography.bodyL,
             decoration: InputDecoration(
               hintText: widget.hint,

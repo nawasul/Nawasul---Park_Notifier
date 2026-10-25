@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
@@ -35,39 +36,38 @@ class _PrimaryButtonState extends State<PrimaryButton> {
 
   @override
   Widget build(BuildContext context) {
+    final reduce = MediaQuery.disableAnimationsOf(context);
+    final scale = reduce || !_isPressed ? 1.0 : 0.97;
+
     return GestureDetector(
       onTapDown: _isInteractive ? (_) => setState(() => _isPressed = true) : null,
       onTapUp: _isInteractive ? (_) => setState(() => _isPressed = false) : null,
       onTapCancel: _isInteractive ? () => setState(() => _isPressed = false) : null,
       onTap: _isInteractive ? widget.onPressed : null,
       child: AnimatedScale(
-        scale: _isPressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 100),
+        scale: scale,
+        duration: reduce ? Duration.zero : const Duration(milliseconds: 100),
         curve: Curves.easeOut,
         child: AnimatedOpacity(
-          opacity: widget.enabled ? 1.0 : 0.5,
-          duration: const Duration(milliseconds: 200),
+          opacity: widget.enabled ? 1 : 0.5,
+          duration: reduce ? Duration.zero : const Duration(milliseconds: 200),
           child: Container(
             width: double.infinity,
             height: AppSpacing.buttonHeight,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: _isPressed ? AppColors.primaryDark : AppColors.primary,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
+              gradient: widget.enabled ? AppGradients.primary : null,
+              color: widget.enabled ? null : AppColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(AppRadius.md),
               boxShadow: widget.enabled ? AppShadows.button : null,
             ),
             child: widget.isLoading
-                ? const Center(
-                    child: AppLoader(size: 24, color: AppColors.surface),
-                  )
+                ? const AppLoader(size: 24, color: AppColors.onPrimary)
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (widget.leadingIcon != null) ...[
-                        Icon(
-                          widget.leadingIcon,
-                          color: AppColors.surface,
-                          size: 20,
-                        ),
+                        Icon(widget.leadingIcon, color: AppColors.onPrimary, size: 20),
                         const SizedBox(width: AppSpacing.sm),
                       ],
                       Text(widget.label, style: AppTypography.button),

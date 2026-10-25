@@ -2,88 +2,84 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/account/presentation/delete_account_screen.dart';
-import '../../features/account/presentation/edit_profile_screen.dart';
-import '../../features/account/presentation/profile_screen.dart';
-import '../../features/alerts/presentation/alert_detail_screen.dart';
-import '../../features/alerts/presentation/alerts_list_screen.dart';
-import '../../features/auth/presentation/account_setup_screen.dart';
-import '../../features/auth/presentation/forgot_password_screen.dart';
-import '../../features/auth/presentation/login_screen.dart';
-import '../../features/auth/presentation/otp_verification_screen.dart';
-import '../../features/auth/presentation/register_screen.dart';
-import '../../features/legal/presentation/privacy_policy_screen.dart';
-import '../../features/legal/presentation/terms_conditions_screen.dart';
-import '../../features/settings/presentation/language_region_screen.dart';
-import '../../features/settings/presentation/notification_preferences_screen.dart';
-import '../../features/settings/presentation/settings_screen.dart';
-import '../../features/support/presentation/contact_support_screen.dart';
-import '../../features/support/presentation/help_faq_screen.dart';
-import '../../features/home/presentation/home_screen.dart';
-import '../../features/language/presentation/language_selection_screen.dart';
-import '../../features/my_qr/presentation/my_qr_code_screen.dart';
-import '../../features/my_qr/presentation/my_qr_tab_screen.dart';
+import '../../features/auth/presentation/allow_alerts_screen.dart';
+import '../../features/auth/presentation/name_screen.dart';
+import '../../features/auth/presentation/phone_screen.dart';
+import '../../features/auth/presentation/verify_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
-import '../../features/sticker/presentation/sticker_order_screen.dart';
-import '../../features/sticker/presentation/sticker_order_status_screen.dart';
-import '../../features/subscription/presentation/subscription_checkout_screen.dart';
-import '../../features/subscription/presentation/subscription_plans_screen.dart';
-import '../../features/subscription/presentation/subscription_success_screen.dart';
-import '../../features/vehicles/presentation/add_edit_vehicle_screen.dart';
+import '../../features/auth/presentation/providers/session_provider.dart';
+import '../../features/home/presentation/home_screen.dart';
 import '../../features/vehicles/presentation/vehicle_details_screen.dart';
+import '../../features/vehicles/presentation/vehicle_form_screen.dart';
+import '../../features/vehicles/presentation/vehicle_qr_screen.dart';
 import '../../features/vehicles/presentation/vehicles_list_screen.dart';
+import '../../features/orders/presentation/order_delivery_screen.dart';
+import '../../features/orders/presentation/order_details_screen.dart';
+import '../../features/orders/presentation/order_result_screen.dart';
+import '../../features/orders/presentation/order_review_screen.dart';
+import '../../features/orders/presentation/order_vehicle_screen.dart';
+import '../../features/orders/presentation/orders_list_screen.dart';
+import '../../features/account/presentation/account_screen.dart';
+import '../../features/account/presentation/delete_account_screen.dart';
+import '../../features/account/presentation/edit_profile_screen.dart';
+import '../../features/account/presentation/notification_settings_screen.dart';
+import '../../features/support/presentation/help_screen.dart';
+import '../../features/support/presentation/legal_screen.dart';
+import '../../features/alerts/presentation/alert_detail_screen.dart';
+import '../../features/alerts/presentation/alerts_list_screen.dart';
 import 'app_routes.dart';
 import 'main_shell.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
-
 final appRouterProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+  final refresh = _RouterRefresh();
+  ref.onDispose(refresh.dispose);
+  ref.listen(sessionProvider, (_, _) => refresh.ping());
+
+  final rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+
+  final router = GoRouter(
+    navigatorKey: rootKey,
     initialLocation: AppRoutes.splash,
+    refreshListenable: refresh,
+    redirect: (context, state) => _redirect(ref, state),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
-        builder: (context, _) => const SplashScreen(),
+        builder: (_, _) => const SplashScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (context, _) => const OnboardingScreen(),
+        builder: (_, _) => const OnboardingScreen(),
       ),
       GoRoute(
-        path: AppRoutes.language,
-        builder: (context, _) => const LanguageSelectionScreen(),
+        path: AppRoutes.phone,
+        builder: (_, _) => const PhoneScreen(),
       ),
       GoRoute(
-        path: AppRoutes.login,
-        builder: (context, _) => const LoginScreen(),
+        path: AppRoutes.verify,
+        builder: (_, _) => const VerifyScreen(),
       ),
       GoRoute(
-        path: AppRoutes.register,
-        builder: (context, _) => const RegisterScreen(),
+        path: AppRoutes.name,
+        builder: (_, _) => const NameScreen(),
       ),
       GoRoute(
-        path: AppRoutes.otp,
-        builder: (context, _) => const OtpVerificationScreen(),
+        path: AppRoutes.allowAlerts,
+        builder: (_, _) => const AllowAlertsScreen(),
       ),
       GoRoute(
-        path: AppRoutes.forgotPassword,
-        builder: (context, _) => const ForgotPasswordScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.accountSetup,
-        builder: (context, _) => const AccountSetupScreen(),
+        path: AppRoutes.legal,
+        builder: (_, state) => LegalScreen(type: state.pathParameters['type'] ?? ''),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, _, navigationShell) =>
-            MainShell(navigationShell: navigationShell),
+        builder: (_, _, shell) => MainShell(navigationShell: shell),
         branches: [
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.home,
-                builder: (context, _) => const HomeScreen(),
+                builder: (_, _) => const HomeScreen(),
               ),
             ],
           ),
@@ -91,15 +87,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.vehicles,
-                builder: (context, _) => const VehiclesListScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.myQr,
-                builder: (context, _) => const MyQrTabScreen(),
+                builder: (_, _) => const VehiclesListScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'add',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, _) => const VehicleFormScreen(),
+                  ),
+                  GoRoute(
+                    path: ':id',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, state) => VehicleDetailsScreen(
+                      id: state.pathParameters['id'] ?? '',
+                      justAdded: state.uri.queryParameters['added'] == '1',
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        parentNavigatorKey: rootKey,
+                        builder: (_, state) => VehicleFormScreen(
+                          vehicleId: state.pathParameters['id'],
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'qr',
+                        parentNavigatorKey: rootKey,
+                        builder: (_, state) => VehicleQrScreen(
+                          id: state.pathParameters['id'] ?? '',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -107,7 +126,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.alerts,
-                builder: (context, _) => const AlertsListScreen(),
+                builder: (_, _) => const AlertsListScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':alertId',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, state) => AlertDetailsScreen(
+                      alertId: state.pathParameters['alertId'] ?? '',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -115,119 +143,116 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.account,
-                builder: (context, _) => const ProfileScreen(),
+                builder: (_, _) => const AccountScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, _) => const EditProfileScreen(),
+                  ),
+                  GoRoute(
+                    path: 'notifications',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, _) => const NotificationSettingsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'help',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, _) => const HelpScreen(),
+                  ),
+                  GoRoute(
+                    path: 'delete',
+                    parentNavigatorKey: rootKey,
+                    builder: (_, _) => const DeleteAccountScreen(),
+                  ),
+                ],
               ),
             ],
           ),
         ],
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.vehiclesAdd,
-        builder: (context, _) => const AddEditVehicleScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/vehicles/:id/edit',
-        builder: (_, state) => AddEditVehicleScreen(
-          vehicleId: state.pathParameters['id'],
+        path: AppRoutes.orderVehicle,
+        builder: (_, state) => OrderVehicleScreen(
+          initialVehicleId: state.uri.queryParameters['vehicleId'],
         ),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/vehicles/:id/qr',
-        builder: (_, state) => MyQrCodeScreen(
-          vehicleId: state.pathParameters['id']!,
+        path: AppRoutes.orderDelivery,
+        builder: (_, _) => const OrderDeliveryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderReview,
+        builder: (_, _) => const OrderReviewScreen(),
+      ),
+      GoRoute(
+        path: '/order/result/:orderId',
+        builder: (_, state) => OrderResultScreen(
+          orderId: state.pathParameters['orderId'] ?? '',
         ),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/vehicles/:id/sticker-order',
-        builder: (_, state) => StickerOrderScreen(
-          vehicleId: state.pathParameters['id']!,
-        ),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/vehicles/:id',
-        builder: (_, state) => VehicleDetailsScreen(
-          vehicleId: state.pathParameters['id']!,
-        ),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/sticker-orders/:id',
-        builder: (_, state) => StickerOrderStatusScreen(
-          orderId: state.pathParameters['id']!,
-        ),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/alerts/:id',
-        builder: (_, state) => AlertDetailScreen(
-          alertId: state.pathParameters['id']!,
-        ),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.subscriptionPlans,
-        builder: (context, _) => const SubscriptionPlansScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.subscriptionCheckout,
-        builder: (context, _) => const SubscriptionCheckoutScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.subscriptionSuccess,
-        builder: (context, _) => const SubscriptionSuccessScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.profileEdit,
-        builder: (context, _) => const EditProfileScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.settings,
-        builder: (context, _) => const SettingsScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.notificationPreferences,
-        builder: (context, _) => const NotificationPreferencesScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.languageRegion,
-        builder: (context, _) => const LanguageRegionScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.helpFaq,
-        builder: (context, _) => const HelpFaqScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.contactSupport,
-        builder: (context, _) => const ContactSupportScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.privacyPolicy,
-        builder: (context, _) => const PrivacyPolicyScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.termsConditions,
-        builder: (context, _) => const TermsConditionsScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: AppRoutes.deleteAccount,
-        builder: (context, _) => const DeleteAccountScreen(),
+        path: AppRoutes.orders,
+        builder: (_, _) => const OrdersListScreen(),
+        routes: [
+          GoRoute(
+            path: ':orderId',
+            builder: (_, state) => OrderDetailsScreen(
+              orderId: state.pathParameters['orderId'] ?? '',
+            ),
+          ),
+        ],
       ),
     ],
   );
+  ref.onDispose(router.dispose);
+  return router;
 });
+
+String? _redirect(Ref ref, GoRouterState state) {
+  final asyncSession = ref.read(sessionProvider);
+  final loc = state.uri.path;
+  if (asyncSession.isLoading || asyncSession.hasError) {
+    return loc == AppRoutes.splash ? null : AppRoutes.splash;
+  }
+  final session = asyncSession.requireValue;
+  if (loc == AppRoutes.splash) return null;
+  if (loc.startsWith('/legal')) return null;
+  if (loc == AppRoutes.help) return null;
+
+  final dest = destinationFor(session);
+  final onboarding = loc == AppRoutes.onboarding;
+  final loggingIn = loc == AppRoutes.phone || loc == AppRoutes.verify;
+  final naming = loc == AppRoutes.name;
+  final alerts = loc == AppRoutes.allowAlerts;
+
+  if (!session.isAuthenticated) {
+    if (onboarding) {
+      return session.hasSeenOnboarding ? AppRoutes.phone : null;
+    }
+    if (loggingIn) {
+      return session.hasSeenOnboarding ? null : AppRoutes.onboarding;
+    }
+    return dest;
+  }
+
+  if (onboarding || loggingIn) return dest;
+  if (naming) {
+    if (!session.isNewUser || session.profileComplete) return dest;
+    return null;
+  }
+  if (alerts) {
+    if (!session.isNewUser || session.alertsPromptSeen) return dest;
+    if (!session.profileComplete) return AppRoutes.name;
+    return null;
+  }
+  if (session.isNewUser && !session.profileComplete) return AppRoutes.name;
+  if (session.isNewUser && !session.alertsPromptSeen) {
+    return AppRoutes.allowAlerts;
+  }
+  return null;
+}
+
+class _RouterRefresh extends ChangeNotifier {
+  void ping() => notifyListeners();
+}

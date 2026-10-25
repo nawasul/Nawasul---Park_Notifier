@@ -5,6 +5,8 @@ import '../../core/theme/app_typography.dart';
 import 'icon_badge.dart';
 import 'primary_button.dart';
 
+typedef EmptyState = EmptyStateWidget;
+
 class EmptyStateWidget extends StatelessWidget {
   const EmptyStateWidget({
     super.key,

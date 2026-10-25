@@ -1,164 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/models/enums.dart';
+import '../../../core/models/order.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/confirmation_dialog.dart';
 import '../../../shared/widgets/destructive_button.dart';
-import '../../../shared/widgets/radio_option_list.dart';
+import '../../../shared/widgets/info_banner.dart';
+import '../../auth/presentation/providers/session_provider.dart';
+import '../../home/presentation/providers/garage_provider.dart';
+import '../data/account_repository.dart';
 
-class DeleteAccountScreen extends StatefulWidget {
+class DeleteAccountScreen extends ConsumerStatefulWidget {
   const DeleteAccountScreen({super.key});
 
   @override
-  State<DeleteAccountScreen> createState() => _DeleteAccountScreenState();
+  ConsumerState<DeleteAccountScreen> createState() => _DeleteAccountScreenState();
 }
 
-class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
-  static const _reasons = [
-    'Not using the app',
-    'Privacy concerns',
-    'Found a better alternative',
-    'Other',
-  ];
+class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
+  final _reason = TextEditingController();
+  var _loading = false;
 
-  String? _selectedReason;
-  bool _isLoading = false;
+  @override
+  void dispose() {
+    _reason.dispose();
+    super.dispose();
+  }
 
-  Future<void> _onDelete() async {
+  Future<void> _delete() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await ConfirmationDialog.show(
       context,
-      title: 'Delete your account?',
-      message:
-          'This action is permanent and cannot be undone. All your data, '
-          'vehicles, and subscription will be permanently removed.',
-      confirmLabel: 'Delete Account',
-      cancelLabel: 'Keep Account',
+      title: l10n.deleteConfirmTitle,
+      message: l10n.deleteConfirmBody,
+      confirmLabel: l10n.accountDelete,
+      cancelLabel: l10n.actionCancel,
       isDestructive: true,
     );
     if (confirmed != true || !mounted) return;
-
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Account deleted successfully')),
-    );
-    context.go(AppRoutes.login);
+    setState(() => _loading = true);
+    final reason = _reason.text.trim();
+    await ref.read(accountRepositoryProvider).deleteMe(
+          reason: reason.isEmpty ? null : reason,
+        );
+    await ref.read(sessionProvider.notifier).signOut();
+    if (mounted) context.go(AppRoutes.phone);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text('Delete Account', style: AppTypography.headingM),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
-                decoration: AppTheme.surfaceCardDecoration,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: const BoxDecoration(
-                        color: AppColors.errorBg,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.warning_amber_rounded,
-                        color: AppColors.error,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      'Delete your account?',
-                      style: AppTypography.headingM.copyWith(
-                        color: AppColors.error,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      'This action is permanent. The following will be removed:',
-                      style: AppTypography.bodyM.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    const _BulletItem(text: 'Your profile and personal data'),
-                    const _BulletItem(text: 'All registered vehicles'),
-                    const _BulletItem(text: 'Active subscription and billing'),
-                    const _BulletItem(text: 'QR codes and alert history'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xxl),
-              Container(
-                padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
-                decoration: AppTheme.surfaceCardDecoration,
-                child: RadioOptionList(
-                  label: 'Reason for leaving (optional)',
-                  options: _reasons,
-                  selectedValue: _selectedReason,
-                  onChanged: (value) => setState(() => _selectedReason = value),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xxxl),
-              DestructiveButton(
-                label: 'Delete Account',
-                isLoading: _isLoading,
-                onPressed: _isLoading ? null : _onDelete,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+    final l10n = AppLocalizations.of(context);
+    final orders = ref.watch(ordersProvider).value ?? const <Order>[];
+    final inProgress = orders.any(_inProgress);
 
-class _BulletItem extends StatelessWidget {
-  const _BulletItem({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return AppScaffold(
+      title: l10n.accountDelete,
+      body: ListView(
         children: [
-          const Text('•  ', style: TextStyle(color: AppColors.error)),
-          Expanded(
-            child: Text(
-              text,
-              style: AppTypography.bodyM.copyWith(
-                color: AppColors.textSecondary,
+          Text(l10n.deleteBody, style: AppTypography.bodyL),
+          if (inProgress) ...[
+            const SizedBox(height: AppSpacing.lg),
+            InfoBanner(
+              message: l10n.deleteInProgress,
+              tone: InfoBannerTone.warning,
+            ),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton(
+                onPressed: () => context.push(AppRoutes.help),
+                child: Text(l10n.accountHelp),
               ),
             ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          AppTextField(
+            controller: _reason,
+            label: l10n.deleteReason,
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          DestructiveButton(
+            label: l10n.accountDelete,
+            isLoading: _loading,
+            onPressed: _delete,
           ),
         ],
       ),
     );
   }
+}
+
+bool _inProgress(Order order) {
+  return order.status.isPaid && order.status != OrderStatus.delivered;
 }

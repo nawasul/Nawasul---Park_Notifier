@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
@@ -35,7 +36,10 @@ class _ExpandableFAQItemState extends State<ExpandableFAQItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InkWell(
+          Semantics(
+            button: true,
+            expanded: _isExpanded,
+            child: InkWell(
             onTap: () => setState(() => _isExpanded = !_isExpanded),
             borderRadius: BorderRadius.circular(AppRadius.lg),
             child: Padding(
@@ -56,12 +60,13 @@ class _ExpandableFAQItemState extends State<ExpandableFAQItem> {
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                     child: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
+                      AppIcons.caretDown,
                       color: AppColors.textMuted,
                     ),
                   ),
                 ],
               ),
+            ),
             ),
           ),
           AnimatedSize(

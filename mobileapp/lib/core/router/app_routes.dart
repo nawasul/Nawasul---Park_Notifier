@@ -1,43 +1,36 @@
 class AppRoutes {
   AppRoutes._();
 
-  // Auth
-  static const splash = '/';
+  static const splash = '/splash';
   static const onboarding = '/onboarding';
-  static const language = '/language';
-  static const login = '/login';
-  static const register = '/register';
-  static const otp = '/otp';
-  static const forgotPassword = '/forgot-password';
-  static const accountSetup = '/account-setup';
+  static const phone = '/auth/phone';
+  static const verify = '/auth/verify';
+  static const name = '/auth/name';
+  static const allowAlerts = '/auth/allow-alerts';
 
-  // Shell tabs
+  static const legal = '/legal/:type';
+  static String legalType(String type) => '/legal/$type';
+
   static const home = '/home';
   static const vehicles = '/vehicles';
-  static const myQr = '/my-qr';
-  static const alerts = '/alerts';
-  static const account = '/account';
-
-  // Pushed routes
   static const vehiclesAdd = '/vehicles/add';
+  static String vehicle(String id) => '/vehicles/$id';
   static String vehicleEdit(String id) => '/vehicles/$id/edit';
-  static String vehicleDetails(String id) => '/vehicles/$id';
   static String vehicleQr(String id) => '/vehicles/$id/qr';
-  static String stickerOrder(String id) => '/vehicles/$id/sticker-order';
-  static String stickerOrderStatus(String orderId) => '/sticker-orders/$orderId';
-  static String alertDetail(String id) => '/alerts/$id';
-  static const subscriptionPlans = '/subscription/plans';
-  static const subscriptionCheckout = '/subscription/checkout';
-  static const subscriptionSuccess = '/subscription/success';
 
-  // Account & settings
-  static const profileEdit = '/profile/edit';
-  static const settings = '/settings';
-  static const notificationPreferences = '/settings/notifications';
-  static const languageRegion = '/settings/language';
-  static const helpFaq = '/help';
-  static const contactSupport = '/support/contact';
-  static const privacyPolicy = '/legal/privacy';
-  static const termsConditions = '/legal/terms';
+  static const alerts = '/alerts';
+  static String alert(String id) => '/alerts/$id';
+
+  static const account = '/account';
+  static const accountEdit = '/account/edit';
+  static const notifications = '/account/notifications';
+  static const help = '/account/help';
   static const deleteAccount = '/account/delete';
+
+  static const orderVehicle = '/order/vehicle';
+  static const orderDelivery = '/order/delivery';
+  static const orderReview = '/order/review';
+  static String orderResult(String orderId) => '/order/result/$orderId';
+  static const orders = '/orders';
+  static String order(String orderId) => '/orders/$orderId';
 }

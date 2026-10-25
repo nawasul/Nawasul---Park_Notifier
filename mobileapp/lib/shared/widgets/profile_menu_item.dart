@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
@@ -30,7 +31,9 @@ class ProfileMenuItem extends StatelessWidget {
         InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppSpacing.sm),
-          child: Padding(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Padding(
             padding: const EdgeInsetsDirectional.symmetric(
               vertical: AppSpacing.md,
               horizontal: AppSpacing.sm,
@@ -54,12 +57,13 @@ class ProfileMenuItem extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                  Icons.chevron_right_rounded,
+                  AppIcons.caretRight,
                   color: isDestructive ? AppColors.error : AppColors.textMuted,
                   size: 22,
                 ),
               ],
             ),
+          ),
           ),
         ),
         if (showDivider)

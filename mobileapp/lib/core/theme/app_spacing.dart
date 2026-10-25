@@ -9,6 +9,9 @@ class AppSpacing {
   static const double xxl = 48;
   static const double xxxl = 64;
 
+  /// Horizontal screen padding from the design spec.
+  static const double screen = 20;
+
   /// Primary button touch target height.
   static const double buttonHeight = 58;
 

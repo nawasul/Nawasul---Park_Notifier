@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
@@ -14,7 +15,8 @@ class CitySelectField extends StatelessWidget {
     required this.isFocused,
     required this.onFocusChange,
     required this.onChanged,
-    this.hint = 'Select your city',
+    required this.hint,
+    this.labels,
   });
 
   final List<String> cities;
@@ -23,6 +25,7 @@ class CitySelectField extends StatelessWidget {
   final ValueChanged<bool> onFocusChange;
   final ValueChanged<String?> onChanged;
   final String hint;
+  final Map<String, String>? labels;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,7 @@ class CitySelectField extends StatelessWidget {
               vertical: AppSpacing.sm,
             ),
             suffixIcon: Icon(
-              Icons.keyboard_arrow_down_rounded,
+              AppIcons.caretDown,
               color: AppColors.textMuted,
             ),
           ),
@@ -64,7 +67,7 @@ class CitySelectField extends StatelessWidget {
                   .map(
                     (city) => DropdownMenuItem<String>(
                       value: city,
-                      child: Text(city),
+                      child: Text(labels?[city] ?? city),
                     ),
                   )
                   .toList(),

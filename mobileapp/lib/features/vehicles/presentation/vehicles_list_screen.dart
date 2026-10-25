@@ -2,132 +2,93 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/models/enums.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/empty_state_widget.dart';
-import '../../../shared/widgets/search_field.dart';
+import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/offline_banner.dart';
+import '../../../shared/widgets/skeleton_box.dart';
+import '../../../shared/widgets/status_pill.dart';
 import '../../../shared/widgets/vehicle_card.dart';
-import '../../vehicles/presentation/providers/vehicle_provider.dart';
+import '../../home/presentation/providers/garage_provider.dart';
+import 'providers/vehicle_provider.dart';
+import 'vehicle_protection.dart';
 
-class VehiclesListScreen extends ConsumerStatefulWidget {
+class VehiclesListScreen extends ConsumerWidget {
   const VehiclesListScreen({super.key});
 
   @override
-  ConsumerState<VehiclesListScreen> createState() =>
-      _VehiclesListScreenState();
-}
-
-class _VehiclesListScreenState extends ConsumerState<VehiclesListScreen> {
-  String _query = '';
-  bool _isGrid = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final vehicles = ref.watch(vehicleProvider);
-    final filtered = vehicles.where((v) {
-      if (_query.isEmpty) return true;
-      final q = _query.toLowerCase();
-      return v.make.toLowerCase().contains(q) ||
-          v.model.toLowerCase().contains(q) ||
-          v.plateNumber.toLowerCase().contains(q);
-    }).toList();
+    final orders = ref.watch(ordersProvider);
+    final now = ref.watch(clockProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AppRoutes.vehiclesAdd),
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: AppColors.surface),
-      ),
-      body: SafeArea(
-        child: vehicles.isEmpty
-            ? EmptyStateWidget(
-                icon: Icons.directions_car_outlined,
-                heading: 'No vehicles yet',
-                message: 'Add your first vehicle to get started.',
-                actionLabel: 'Add Vehicle',
-                onAction: () => context.push(AppRoutes.vehiclesAdd),
-              )
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(
-                      AppSpacing.lg,
-                      AppSpacing.lg,
-                      AppSpacing.lg,
-                      AppSpacing.md,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'My Vehicles',
-                            style: AppTypography.headingL,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () =>
-                              setState(() => _isGrid = !_isGrid),
-                          icon: Icon(
-                            _isGrid ? Icons.view_list : Icons.grid_view,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.symmetric(
-                      horizontal: AppSpacing.lg,
-                    ),
-                    child: SearchField(
-                      hint: 'Search vehicles...',
-                      onChanged: (v) => setState(() => _query = v),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Expanded(
-                    child: _isGrid
-                        ? GridView.builder(
-                            padding: const EdgeInsetsDirectional.all(
-                              AppSpacing.lg,
-                            ),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: AppSpacing.md,
-                              mainAxisSpacing: AppSpacing.md,
-                              childAspectRatio: 0.85,
-                            ),
-                            itemCount: filtered.length,
-                            itemBuilder: (_, i) => VehicleCard(
-                              vehicle: filtered[i],
-                              compact: true,
-                              onTap: () => context.push(
-                                AppRoutes.vehicleDetails(filtered[i].id),
-                              ),
-                            ),
-                          )
-                        : ListView.separated(
-                            padding: const EdgeInsetsDirectional.all(
-                              AppSpacing.lg,
-                            ),
-                            itemCount: filtered.length,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: AppSpacing.md),
-                            itemBuilder: (_, i) => VehicleCard(
-                              vehicle: filtered[i],
-                              onTap: () => context.push(
-                                AppRoutes.vehicleDetails(filtered[i].id),
-                              ),
-                            ),
-                          ),
-                  ),
-                ],
-              ),
+    return AppScaffold(
+      title: l10n.vehiclesTitle,
+      actions: [
+        TextButton(
+          onPressed: () => context.push(AppRoutes.vehiclesAdd),
+          child: Text(l10n.vehiclesAdd),
+        ),
+      ],
+      body: WithOfflineBanner(
+        child: vehicles.when(
+          loading: () => const ListSkeleton(),
+          error: (_, _) => ErrorState(
+            onRetry: () => ref.invalidate(vehicleProvider),
+          ),
+        data: (items) {
+          if (items.isEmpty) {
+            return EmptyState(
+              icon: AppIcons.car,
+              heading: l10n.vehiclesEmpty,
+              actionLabel: l10n.homeAddVehicle,
+              onAction: () => context.push(AppRoutes.vehiclesAdd),
+            );
+          }
+          final orderList = orders.value ?? const [];
+          return ListView.separated(
+            itemCount: items.length,
+            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+            itemBuilder: (context, index) {
+              final vehicle = items[index];
+              final view = protectionView(
+                vehicle: vehicle,
+                orders: orderList,
+                now: now,
+              );
+              final (label, variant) = _status(l10n, view.state);
+              return VehicleCard(
+                vehicle: vehicle,
+                statusLabel: label,
+                statusVariant: variant,
+                onTap: () => context.push(AppRoutes.vehicle(vehicle.id)),
+              );
+            },
+          );
+        },
+        ),
       ),
     );
   }
+}
+
+(String, StatusPillVariant) _status(AppLocalizations l10n, ProtectionState state) {
+  return switch (state) {
+    ProtectionState.noSticker => (l10n.homeNotProtected, StatusPillVariant.muted),
+    ProtectionState.paymentPending => (
+        l10n.homeWaitingPayment,
+        StatusPillVariant.warning,
+      ),
+    ProtectionState.inTransit => (l10n.homeOnTheWay, StatusPillVariant.pending),
+    ProtectionState.active => (l10n.homeProtected, StatusPillVariant.success),
+    ProtectionState.expiring => (l10n.homeExpiresSoon, StatusPillVariant.warning),
+    ProtectionState.expired => (l10n.homeNotProtectedNow, StatusPillVariant.error),
+    ProtectionState.noVehicle => (l10n.homeAddFirst, StatusPillVariant.muted),
+  };
 }
